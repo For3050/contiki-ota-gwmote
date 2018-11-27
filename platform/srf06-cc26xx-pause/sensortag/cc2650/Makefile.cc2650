@@ -1,0 +1,13 @@
+### Add to the source list
+ 
+### BOARD_SOURCEFILES += leds-arch.c
+BOARD_SOURCEFILES += spi_driver.c spi_api.c
+
+### Will allow the inclusion of the correct CPU makefile
+CPU_FAMILY = cc26xx
+
+### Add to the source dirs
+CONTIKI_TARGET_DIRS += sensortag/cc2650
+
+### Include the common sensortag makefile
+include $(PLATFORM_ROOT_DIR)/sensortag/Makefile.sensortag

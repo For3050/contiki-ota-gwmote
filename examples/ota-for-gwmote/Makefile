@@ -1,0 +1,11 @@
+DEFINES+=PROJECT_CONF_H=\"project-conf.h\"
+
+CONTIKI_PROJECT = holliot-test
+all: $(CONTIKI_PROJECT)
+
+
+CONTIKI = ../..
+
+CONTIKI_WITH_RIME = 1
+CONTIKI_WITH_HOLLIOT_GATEWAY_MOTE = 1
+include $(CONTIKI)/Makefile.include
