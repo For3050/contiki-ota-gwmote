@@ -89,7 +89,7 @@
  */
 
 
-
+/**********************************Gateway mote board header file************************************/
 
 #define BOARD_IOID_SDA_HP         IOID_UNUSED /**< Interface 1 SDA: MPU */
 #define BOARD_IOID_SCL_HP         IOID_UNUSED /**< Interface 1 SCL: MPU */
@@ -149,75 +149,69 @@
 #define BOARD_KEY_RIGHT           (1 << BOARD_IOID_KEY_RIGHT)
 
 
-#define	BOARD_IOID_BUTTON_2		IOID_0
-/*
- * IOID_1, IOID_2, IOID_26, IOID_28(used for fanner), IOID_29(led3), IOID_30(fanner) reserved 
- */
+#define	BOARD_IOID_UNUSED_IOID0		IOID_0
 #define	BOARD_IOID_UNUSED_IOID1		IOID_1
 #define	BOARD_IOID_UNUSED_IOID2		IOID_2
-#define	BOARD_IOID_UNUSED_IOID11		IOID_11
-#define	BOARD_IOID_UNUSED_IOID12		IOID_12
-
-#define	BOARD_IOID_DRYn			IOID_3
-
-#define	BOARD_IOID_BUTTON_1		IOID_4
+#define	BOARD_IOID_UNUSED_IOID3		IOID_3
+#define	BOARD_IOID_UNUSED_IOID4		IOID_4
+/*
+ */
 
 #define BOARD_IOID_SDA            IOID_5 /**< Interface 0 SDA: All sensors bar MPU */
 #define BOARD_IOID_SCL            IOID_6 /**< Interface 0 SCL: All sensors bar MPU */
 
-#define	BOARD_IOID_IRQ_EXT		IOID_7
+#define	BOARD_IOID_UNUSED_IOID7		IOID_7
+#define	BOARD_IOID_UNUSED_IOID8		IOID_8
+#define	BOARD_IOID_UNUSED_IOID9		IOID_9
+#define	BOARD_IOID_UNUSED_IOID10		IOID_10
 
-#define	BOARD_IOID_SPI_UART		IOID_9
+#define	BOARD_IOID_UNUSED_IOID20		IOID_20
+#define	BOARD_IOID_UNUSED_IOID22		IOID_22
+#define	BOARD_IOID_UNUSED_IOID23		IOID_23
+#define	BOARD_IOID_UNUSED_IOID28		IOID_28
+#define	BOARD_IOID_UNUSED_IOID29		IOID_29
+#define	BOARD_IOID_UNUSED_IOID30		IOID_30
 
-#define	BOARD_IOID_PIR			IOID_10
+#define	BOARD_IOID_P9_DNI		IOID_11
+#define	BOARD_IOID_P10_DNI		IOID_12
+#define	BOARD_IOID_P6_DNI		IOID_27
+
+#define	BOARD_IOID_LED_21		IOID_13
+#define	BOARD_LED_21			(1 << BOARD_IOID_LED_21)
+
+#define	BOARD_LED_ALL			(BOARD_LED_21)
+
+#define BOARD_IOID_TDO2		IOID_16
 
 
-#define BOARD_IOID_LED_1		IOID_13
-#define	BOARD_LED_1			(1 << BOARD_IOID_LED_1)
-
-#define	BOARD_IOID_SPI_FCSN		IOID_14
-
-#define BOARD_IOID_LED_2_TDO		IOID_16
-#define BOARD_LED_2			(1 << BOARD_IOID_LED_2_TDO)
-
-#define BOARD_IOID_LED_3		IOID_30
-
-#define	BOARD_LED_3			(1 << BOARD_IOID_LED_3)
 
 
-#define	BOARD_LED_ALL			(BOARD_LED_1 | BOARD_LED_2 | BOARD_LED_3 )
 
 #define BOARD_IOID_UART_RX		IOID_15 
 #define BOARD_IOID_UART_TX		IOID_18
 #define BOARD_UART_RX             (1 << BOARD_IOID_UART_RX)
 #define BOARD_UART_TX             (1 << BOARD_IOID_UART_TX)
 
-#define	BOARD_IOID_LIGHT_SNSR		IOID_20
 
 #define BOARD_IOID_SPI_SCLK_TDI		IOID_17  
 #define BOARD_IOID_SPI_MOSI		IOID_19
 #define BOARD_IOID_SPI_MISO		IOID_21
-#define	BOARD_IOID_SPI_FSS_EXT		IOID_8	
+#define	BOARD_IOID_SPI_FSS_EXT		IOID_14
+#define	BOARD_IOID_IRQ_EXT		IOID_24 //SPI_IRQ
+#define BOARD_IOID_SPI_CON23		IOID_25
+#define BOARD_IOID_SPI_UART		IOID_26
+
+
 #define	BOARD_SPI_SCK			(1 << BOARD_IOID_SPI_SCLK_TDI)
 #define	BOARD_SPI_MOSI			(1 << BOARD_IOID_SPI_MOSI)
 #define	BOARD_SPI_MISO			(1 << BOARD_IOID_SPI_MISO)
 
 
-#define	BOARD_IOID_ENB			IOID_22
 
-#define	BOARD_IOID_SPI_IRQ		IOID_23
 
-#define	BOARD_IOID_C2_P0_1		IOID_24
 
-#define	BOARD_IOID_GAS_OUT		IOID_25
 
-#define	BOARD_IOID_CURRENT_ADC		IOID_26
 
-#define	BOARD_IOID_MONITOR_12V		IOID_27
-
-#define	BOARD_IOID_MONITOR_5V		IOID_28
-
-#define	BOARD_IOID_FANNER_CTRL		IOID_29
 /** @} */
 /*---------------------------------------------------------------------------*/
 /**

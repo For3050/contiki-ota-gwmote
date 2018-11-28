@@ -130,61 +130,87 @@ configure_unused_pins(void)
 }
 #endif
 
+#define		CONFIGURE_UNUSED_PIN(pin_num)	do{	\
+  ti_lib_ioc_pin_type_gpio_input(BOARD_IOID_UNUSED_IOID##pin_num);		\
+  ti_lib_ioc_io_port_pull_set(BOARD_IOID_UNUSED_IOID##pin_num, IOC_IOPULL_DOWN);\
+}while(0);
 
+/* gateway mote configure unused pins */
 static void
 configure_unused_pins(void)
 {
-  ti_lib_ioc_pin_type_gpio_input(BOARD_IOID_UNUSED_IOID1);
-  ti_lib_ioc_io_port_pull_set(BOARD_IOID_UNUSED_IOID1, IOC_IOPULL_DOWN);
-  ti_lib_ioc_pin_type_gpio_input(BOARD_IOID_UNUSED_IOID2);
-  ti_lib_ioc_io_port_pull_set(BOARD_IOID_UNUSED_IOID2, IOC_IOPULL_DOWN);
+	CONFIGURE_UNUSED_PIN(0);
+	CONFIGURE_UNUSED_PIN(1);
+	CONFIGURE_UNUSED_PIN(2);
+	CONFIGURE_UNUSED_PIN(3);
+	CONFIGURE_UNUSED_PIN(4);
 
-  ti_lib_ioc_pin_type_gpio_input(BOARD_IOID_UNUSED_IOID11);
-  ti_lib_ioc_io_port_pull_set(BOARD_IOID_UNUSED_IOID11, IOC_IOPULL_DOWN);
-  ti_lib_ioc_pin_type_gpio_input(BOARD_IOID_UNUSED_IOID12);
-  ti_lib_ioc_io_port_pull_set(BOARD_IOID_UNUSED_IOID12, IOC_IOPULL_DOWN);
+	CONFIGURE_UNUSED_PIN(7);
+	CONFIGURE_UNUSED_PIN(8);
+	CONFIGURE_UNUSED_PIN(9);
+	CONFIGURE_UNUSED_PIN(10);
+
+	CONFIGURE_UNUSED_PIN(20);
+	CONFIGURE_UNUSED_PIN(22);
+	CONFIGURE_UNUSED_PIN(23);
+
+	CONFIGURE_UNUSED_PIN(28);
+	CONFIGURE_UNUSED_PIN(29);
+	CONFIGURE_UNUSED_PIN(30);
+#if	1
+	ti_lib_ioc_pin_type_gpio_input(BOARD_IOID_P9_DNI);
+	ti_lib_ioc_io_port_pull_set(BOARD_IOID_P9_DNI, IOC_IOPULL_DOWN);
+
+	ti_lib_ioc_pin_type_gpio_input(BOARD_IOID_P10_DNI);
+	ti_lib_ioc_io_port_pull_set(BOARD_IOID_P10_DNI, IOC_IOPULL_DOWN);
+	ti_lib_ioc_pin_type_gpio_input(BOARD_IOID_P6_DNI);
+	ti_lib_ioc_io_port_pull_set(BOARD_IOID_P6_DNI, IOC_IOPULL_DOWN);
 
 
-  ti_lib_ioc_pin_type_gpio_input(BOARD_IOID_BUTTON_1);
-  ti_lib_ioc_io_port_pull_set(BOARD_IOID_BUTTON_1, IOC_IOPULL_DOWN);
-  ti_lib_ioc_pin_type_gpio_input(BOARD_IOID_BUTTON_2);
-  ti_lib_ioc_io_port_pull_set(BOARD_IOID_BUTTON_2, IOC_IOPULL_DOWN);
-
+	ti_lib_ioc_pin_type_gpio_input(BOARD_IOID_SPI_CON23);
+	ti_lib_ioc_io_port_pull_set(BOARD_IOID_SPI_CON23, IOC_IOPULL_DOWN);
+#endif
 }
 
 /*---------------------------------------------------------------------------*/
-void
+	void
 board_init(void)
 {
-  /* Disable global interrupts */
-  bool int_disabled = ti_lib_int_master_disable();
+	/* Disable global interrupts */
+	bool int_disabled = ti_lib_int_master_disable();
 
-  power_domains_on();
+	power_domains_on();
 
-  /* Enable GPIO peripheral */
-  ti_lib_prcm_peripheral_run_enable(PRCM_PERIPH_GPIO);
+	/* Enable GPIO peripheral */
+	ti_lib_prcm_peripheral_run_enable(PRCM_PERIPH_GPIO);
 
-  /* Apply settings and wait for them to take effect */
-  ti_lib_prcm_load_set();
-  while(!ti_lib_prcm_load_get());
+	/* Apply settings and wait for them to take effect */
+	ti_lib_prcm_load_set();
+	while(!ti_lib_prcm_load_get());
 
-  /* I2C controller */
-  board_i2c_wakeup();
-  //board_i2c_shutdown();
-  //buzzer_init();
+	/* I2C controller */
+	
 
-  /* Make sure the external flash is in the lower power mode */
-  //ext_flash_init();
+	//WARNING:in current version, i2c is not used,DIO5 is prohibition of use
+	//call the i2c shutdown or wakeup will cause the wireless mote crashed.
+	//board_i2c_wakeup();
+	
+	//board_i2c_shutdown();
+	
+	//buzzer_init();
 
-  //lpm_register_module(&sensortag_module);
+	/* Make sure the external flash is in the lower power mode */
+	//ext_flash_init();
 
-  /* For unsupported peripherals, select a default pin configuration */
-  configure_unused_pins();
+	//lpm_register_module(&sensortag_module);
 
-  /* Re-enable interrupt if initially enabled. */
-  if(!int_disabled) {
-    ti_lib_int_master_enable();
-  }
+	/* For unsupported peripherals, select a default pin configuration */
+	configure_unused_pins();
+
+	/* Re-enable interrupt if initially enabled. */
+	if(!int_disabled) {
+		ti_lib_int_master_enable();
+	}
 }
 /*---------------------------------------------------------------------------*/
 /** @} */
