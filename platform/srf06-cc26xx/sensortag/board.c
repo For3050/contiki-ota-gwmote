@@ -139,6 +139,7 @@ configure_unused_pins(void)
 static void
 configure_unused_pins(void)
 {
+#if	0
 	CONFIGURE_UNUSED_PIN(0);
 	CONFIGURE_UNUSED_PIN(1);
 	CONFIGURE_UNUSED_PIN(2);
@@ -157,7 +158,7 @@ configure_unused_pins(void)
 	CONFIGURE_UNUSED_PIN(28);
 	CONFIGURE_UNUSED_PIN(29);
 	CONFIGURE_UNUSED_PIN(30);
-#if	1
+
 	ti_lib_ioc_pin_type_gpio_input(BOARD_IOID_P9_DNI);
 	ti_lib_ioc_io_port_pull_set(BOARD_IOID_P9_DNI, IOC_IOPULL_DOWN);
 

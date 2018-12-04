@@ -1,7 +1,7 @@
 ### Add to the source list
  
 ### BOARD_SOURCEFILES += leds-arch.c
-### BOARD_SOURCEFILES += spi_driver.c spi_api.c leds_driver.c fanner_driver.c
+BOARD_SOURCEFILES += spi_driver.c spi_api.c
 
 ### Will allow the inclusion of the correct CPU makefile
 CPU_FAMILY = cc26xx
