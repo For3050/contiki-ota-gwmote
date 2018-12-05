@@ -60,8 +60,10 @@ spi_init(void)
 
 
 	/* configure GPIO pin for communication with master  */
-	ti_lib_ioc_port_configure_set(BOARD_IOID_IRQ_EXT, IOC_PORT_GPIO, IOC_STD_OUTPUT);
-	ti_lib_ioc_io_port_pull_set(BOARD_IOID_IRQ_EXT, IOC_IOPULL_DOWN);
+	//ti_lib_ioc_port_configure_set(BOARD_IOID_IRQ_EXT, IOC_PORT_GPIO, IOC_STD_OUTPUT);
+	//ti_lib_ioc_io_port_pull_set(BOARD_IOID_IRQ_EXT, IOC_IOPULL_DOWN);
+	ti_lib_rom_ioc_pin_type_gpio_output(BOARD_IOID_IRQ_EXT); //changed by pengfei
+	ti_lib_gpio_clear_dio(BOARD_IOID_IRQ_EXT);
 
 	spi_recv_event = process_alloc_event();/* alloc spi recv event */
 	/* init spi slave */
@@ -82,7 +84,8 @@ spi_write(const uint8_t *buf, uint8_t len)
   ti_lib_ssi_data_put(SSI0_BASE, len);
 
   /* pull up gpio pin to notify master that some data will be send */
-  ti_lib_ioc_io_port_pull_set(BOARD_IOID_IRQ_EXT, IOC_IOPULL_UP);
+  //ti_lib_ioc_io_port_pull_set(BOARD_IOID_IRQ_EXT, IOC_IOPULL_UP);
+  ti_lib_gpio_set_dio(BOARD_IOID_IRQ_EXT);
 
 
 
@@ -97,7 +100,8 @@ spi_write(const uint8_t *buf, uint8_t len)
   while(!(HWREG(SSI0_BASE + SSI_O_SR) & SSI_SR_TFE)) ;
 
   /* pull down gpio pin after all data had been send */
-  ti_lib_ioc_io_port_pull_set(BOARD_IOID_IRQ_EXT, IOC_IOPULL_DOWN);
+  //ti_lib_ioc_io_port_pull_set(BOARD_IOID_IRQ_EXT, IOC_IOPULL_DOWN);
+  ti_lib_gpio_clear_dio(BOARD_IOID_IRQ_EXT);
 
   return true;
 }
