@@ -11,20 +11,29 @@
 //#include "net/packetbuf.h"
 #include "net/rime/rime.h"
 /*---------------------------------------------------------------------------*/
+#define OTA_DOWNLOAD      0x01
+#define OTA_ERROR_FRAME   0x02
+
 #define MAX_RETRANSMISSIONS 0x03
-#define MAX_BUF_SIZE 140
-#define MIN_BUF_SIZE 8
+#define RADIO_TX_BUF_SIZE 80
+#define RADIO_RX_BUF_SIZE 16
+#define SPI_TX_BUF_SIZE 16
+#define SPI_RX_BUF_SIZE 80
+
 #define PAYLOAD_SIZE 64
 /*---------------------------------------------------------------------------*/
 
-static uint8_t radio_rx_buf[MIN_BUF_SIZE] = {0x00, };
+static uint8_t radio_tx_buf[RADIO_TX_BUF_SIZE] = {0x00, };
+static uint8_t radio_rx_buf[RADIO_RX_BUF_SIZE] = {0x00, };
 static uint8_t spi_rx_len = 0x0;
 static uint8_t radio_rx_len = 0x0;
-static uint8_t spi_rx_buf[MAX_BUF_SIZE] = {0x00, };
+static uint8_t spi_tx_buf[SPI_TX_BUF_SIZE] = {0x00, };
+static uint8_t spi_rx_buf[SPI_RX_BUF_SIZE] = {0x00, };
 /*---------------------------------------------------------------------------*/
 
 extern process_event_t spi_recv_event;
 
+#if 0
 struct FRAME
 {
 	uint8_t func;
@@ -44,6 +53,7 @@ struct ACK
 
 struct FRAME frame;
 struct ACK ack;
+#endif
 
 /*---------------------------------------------------------------------------*/
 PROCESS(spi_read_process, "gateway-mote ota process");
@@ -62,27 +72,19 @@ static void recv_runicast(struct runicast_conn *c, const linkaddr_t *from, uint8
 	printf("runicast message received from %d.%d, seqno %d\n",
 			from->u8[0], from->u8[1], seqno);
 	/* if OTA_ERROR, send it to imx6ul by spi_write() */
-	//memset(radio_rx_buf, 0, sizeof(radio_rx_buf));
-	packetbuf_copyto(&ack);
-	//copy struct to buffer
-	spi_rx_buf[0] = ack.func;
-	spi_rx_buf[1] = (ack.frame_id>>8)&&0xff;
-	spi_rx_buf[2] = ack.frame_id;
-	spi_rx_buf[3] = (ack.crc>>8)&&0xff;
-	spi_rx_buf[4] = ack.crc;
-
-	spi_rx_len = 5;
-
-	if(spi_rx_buf[0] == 0x02)
+	memset(radio_rx_buf, 0, sizeof(radio_rx_buf));
+	packetbuf_copyto(spi_tx_buf);
+	radio_rx_len = 5;
+	if(spi_tx_buf[0] == OTA_ERROR_FRAME)
 	{
-		printf("radio_rx_buf:\n");
+		spi_write(spi_tx_buf, radio_rx_len);
+
+		printf("spi_tx_buf:\n");
 		for(i = 0; i < radio_rx_len; i++)
 		{
-			printf("%d ", radio_rx_buf[i]);
+			printf("%d ", spi_tx_buf[i]);
 		}
 		printf("\n");
-
-		spi_write(radio_rx_buf, radio_rx_len);
 	}
 }
 
@@ -118,27 +120,22 @@ PROCESS_THREAD(spi_read_process, ev, data)
 		PROCESS_WAIT_EVENT_UNTIL(ev == spi_recv_event);
 		spi_rx_len = spi_read(spi_rx_buf);
 		printf("gateway mote received spi data!\n");
+		memset(radio_tx_buf, 0, sizeof(radio_tx_buf));
+		memcpy(radio_tx_buf, spi_rx_buf, spi_rx_len);
 		for(i=0; i<spi_rx_len; i++)
 		{
-			printf("%d ", spi_rx_buf[i]);
+			printf("%d ", radio_tx_buf[i]);
 		}
 		printf("\n");
-		//copy buffer to struct
-		frame.func = spi_rx_buf[0];
-		frame.frame_id = (spi_rx_buf[1]<<8)||(spi_rx_buf[2]);
-		frame.total_frame = (spi_rx_buf[3]<<8)||(spi_rx_buf[4]);
-		frame.length = spi_rx_buf[5];
-		frame.crc = (spi_rx_buf[PAYLOAD_SIZE+8-2]<<8)||(spi_rx_buf[PAYLOAD_SIZE+8-1]);
-		for(i = 0; i < frame.length; i++)
-		{
-			frame.payload[i] = spi_rx_buf[i+6];
-		}
 
-		if(frame.func == 0x01)
+		if(radio_tx_buf[0] == OTA_DOWNLOAD)
 		{
+			printf("func=%d, frame_id=%d, total_frame=%d,length=%d\n",\
+					radio_tx_buf[0], (radio_tx_buf[1]<<8)||radio_tx_buf[2],\
+					(radio_tx_buf[3]<<8)||radio_tx_buf[4], radio_tx_buf[5]);
 			printf("gateway mote is going to send!\n");
 			/* 1,broadcast OTA_START_COMMAND out! */
-			packetbuf_copyfrom(&frame, sizeof(struct FRAME));
+			packetbuf_copyfrom(radio_tx_buf, 8+radio_tx_buf[5]);
 			broadcast_send(&broadcast);
 			printf("frame sent!\n");
 		}
